@@ -2,7 +2,7 @@
   "name": "pyfold",
   "displayName": "pyFold",
   "description": "A Python extension to easily fold all function or class defiitions.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.146.0"
   },
@@ -60,5 +60,9 @@
   "overrides": {
     "diff": "^8.0.4",
     "serialize-javascript": "^7.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoshBusst/pyfold.git"
   }
 }

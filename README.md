@@ -68,10 +68,10 @@ This generates an installable `.vsix` file in the project directory.
 
 ### 3. Install the extension
 
-Install the generated package directly through the terminal:
+Install the generated package directly through the terminal, for instance:
 
 ```bash
-code --install-extension pyfold-0.0.1.vsix
+code --install-extension pyfold-1.0.0.vsix
 ```
 
 Alternatively, in VS Code:

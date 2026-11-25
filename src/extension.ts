@@ -3,35 +3,29 @@ import * as vscode from 'vscode';
 
 
 
-/**
- * Finds Python class and function definitions in the active document.
- * @param {vscode.TextDocument} document
- * @returns {{ classes: number[], defs: number[] }}
- */
-function getDefinitions(document: vscode.TextDocument) {
+// ---------- DRIVER FUNCTIONS ----------
+
+function getDefinitions() {
     const classes = [];
     const defs = [];
+    
+    const editor = vscode.window.activeTextEditor;
 
-    for (let i = 0; i < document.lineCount; i++) {
-        const line = document.lineAt(i).text;
+    if (editor) {
+        for (let i = 0; i < editor.document.lineCount; i++) {
+            const line = editor.document.lineAt(i).text;
 
-        if (/^\s*class\s+\w+/.test(line)) {
-            classes.push(i);
-        } else if (/^\s*(async\s+)?def\s+\w+/.test(line)) {
-            defs.push(i);
+            if (/^\s*class\s+\w+/.test(line)) {
+                classes.push(i);
+            } else if (/^\s*(async\s+)?def\s+\w+/.test(line)) {
+                defs.push(i);
+            }
         }
     }
 
     return { classes, defs };
 }
 
-
-
-/**
- * Folds or unfolds the specified lines in the active editor.
- * @param {number[]} lines
- * @param {boolean} fold
- */
 async function setFolding(lines: number[], fold: boolean) {
     if (lines.length === 0) { return; }
 
@@ -43,63 +37,43 @@ async function setFolding(lines: number[], fold: boolean) {
 
 
 
-/**
- * Registers the extension commands.
- * @param {vscode.ExtensionContext} context
- */
-function activate(context: vscode.ExtensionContext) {
+// ---------- EXT EXPORT FUNCTIONS ----------
+
+export function deactivate() {}
+
+export function activate(context: vscode.ExtensionContext) {
     const commands = {
         'pyfold.foldClasses': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
-
-            const { classes } = getDefinitions(editor.document);
+            const { classes } = getDefinitions();
             await setFolding(classes, true);
         },
 
         'pyfold.unfoldClasses': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
-
-            const { classes } = getDefinitions(editor.document);
+            const { classes } = getDefinitions();
             await setFolding(classes, false);
         },
 
         'pyfold.foldDefs': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
-
-            const { defs } = getDefinitions(editor.document);
+            const { defs } = getDefinitions();
             await setFolding(defs, true);
         },
 
         'pyfold.unfoldDefs': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
-
-            const { defs } = getDefinitions(editor.document);
+            const { defs } = getDefinitions();
             await setFolding(defs, false);
         },
 
         'pyfold.foldAll': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
-
-            const { classes } = getDefinitions(editor.document);
-            const { defs } = getDefinitions(editor.document);
+            const { classes, defs } = getDefinitions();
 
             await setFolding(defs, true);
             await setFolding(classes, true);
         },
 
         'pyfold.unfoldAll': async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return; }
+            const { classes, defs } = getDefinitions();
 
-            const { classes } = getDefinitions(editor.document);
-            const { defs } = getDefinitions(editor.document);
-
-            await setFolding(defs, false);
+            await setFolding(defs , false);
             await setFolding(classes, false);
         }
     };
@@ -110,7 +84,3 @@ function activate(context: vscode.ExtensionContext) {
         );
     }
 }
-
-function deactivate() {}
-
-module.exports = { activate, deactivate };
